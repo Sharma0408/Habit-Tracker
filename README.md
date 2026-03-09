@@ -94,7 +94,7 @@ habit-tracker/
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v22 or higher)
 - npm or yarn
 - MongoDB (local or MongoDB Atlas)
 
