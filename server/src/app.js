@@ -1,0 +1,24 @@
+const express = require("express");
+const cors = require("cors");
+const authRoutes = require("./routes/auth.routes");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use("/api/auth", authRoutes);
+const errorHandler = require("./middleware/error.middleware");
+const habitRoutes = require("./routes/habitRoutes");
+app.use("/api/habits", habitRoutes);
+
+
+
+
+// Test route
+app.get("/", (req, res) => {
+  res.json({ message: "Habit Game API Running 🚀" });
+});
+
+// Error middleware (MUST be last)
+app.use(errorHandler);
+
+module.exports = app;
