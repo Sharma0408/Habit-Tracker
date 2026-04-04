@@ -1,9 +1,21 @@
-import API from "./axios";
+// client/src/api/authApi.js
 
-export const loginUser = (data) => {
-  return API.post("/auth/login", data);
+import api from "./axios";
+
+// Register new user
+export const registerUser = async (name, email, password) => {
+  const response = await api.post("/auth/register", { name, email, password });
+  return response.data;
 };
 
-export const registerUser = (data) => {
-  return API.post("/auth/register", data);
+// Login user
+export const loginUser = async (email, password) => {
+  const response = await api.post("/auth/login", { email, password });
+  return response.data;
+};
+
+// Get logged-in user profile (XP, level, streak)
+export const getProfile = async () => {
+  const response = await api.get("/user/profile");
+  return response.data;
 };

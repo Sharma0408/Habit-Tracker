@@ -1,54 +1,115 @@
+// client/src/pages/Register.jsx
+
 import { useState } from "react";
-import API from "../api/axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-function Register(){
+const Register = () => {
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
-  const [name,setName] = useState("");
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
-
-    try{
-
-      await API.post("/auth/register",{
-        name,
-        email,
-        password
-      });
-
-      alert("User Registered");
-
-    }catch(err){
-      alert("Error registering");
-    }
-
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  return(
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    <div>
+    try {
+      await register(formData.name, formData.email, formData.password);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      <h2>Register</h2>
+  return (
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+      <div className="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md">
 
-      <input placeholder="Name" onChange={(e)=>setName(e.target.value)} />
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl mb-2">🏆</h1>
+          <h2 className="text-2xl font-bold text-white">Create Account</h2>
+          <p className="text-gray-400 mt-1">Start building your habits today</p>
+        </div>
 
-      <br/><br/>
+        {/* Error */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
+        )}
 
-      <input placeholder="Email" onChange={(e)=>setEmail(e.target.value)} />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="text-gray-400 text-sm mb-1 block">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              placeholder="Your name"
+              className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
+            />
+          </div>
 
-      <br/><br/>
+          <div>
+            <label className="text-gray-400 text-sm mb-1 block">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="you@example.com"
+              className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
+            />
+          </div>
 
-      <input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} />
+          <div>
+            <label className="text-gray-400 text-sm mb-1 block">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Min 6 characters"
+              minLength={6}
+              className="w-full bg-gray-700 text-white px-4 py-3 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
+            />
+          </div>
 
-      <br/><br/>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition duration-200"
+          >
+            {loading ? "Creating account..." : "Register"}
+          </button>
+        </form>
 
-      <button onClick={handleRegister}>Register</button>
-
+        {/* Footer */}
+        <p className="text-center text-gray-400 mt-6 text-sm">
+          Already have an account?{" "}
+          <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
-
   );
-
-}
+};
 
 export default Register;

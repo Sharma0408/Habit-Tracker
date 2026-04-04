@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { getLeaderboard } = require("../controllers/user.controller");
+const authMiddleware = require("../middleware/auth.middleware");
+const { getLeaderboard, getProfile } = require("../controllers/user.controller");
 
-router.get("/leaderboard", getLeaderboard);
+router.get("/profile", authMiddleware, getProfile);      // ADD THIS
+router.get("/leaderboard", authMiddleware, getLeaderboard);
 
 module.exports = router;

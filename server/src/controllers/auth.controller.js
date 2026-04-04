@@ -28,10 +28,19 @@ exports.register = asyncHandler(async (req, res) => {
     password: hashedPassword,
   });
 
-  res.status(201).json({
-    success: true,
-    token: generateToken(user._id),
-  });
+ res.status(201).json({
+  success: true,
+  token: generateToken(user._id),
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    xp: user.xp || 0,
+    totalXP: user.totalXP || 0,
+    level: user.level || 1,
+    streak: user.streak || 0,
+  },
+});
 });
 
 
@@ -52,10 +61,19 @@ exports.loginUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid credentials");
   }
 
-  res.status(200).json({
-    success: true,
-    token: generateToken(user._id),
-  });
+ res.status(200).json({
+  success: true,
+  token: generateToken(user._id),
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    xp: user.xp || 0,
+    totalXP: user.totalXP || 0,
+    level: user.level || 1,
+    streak: user.streak || 0,
+  },
+});
 });
 
 exports.getProfile = async (req, res) => {

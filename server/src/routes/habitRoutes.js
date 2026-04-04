@@ -15,4 +15,6 @@ router.get("/", authMiddleware, getHabits);
 router.delete("/:id", authMiddleware, deleteHabit);
 router.patch("/complete/:habitId", authMiddleware, completeHabit);
 
+
+
 module.exports = router;

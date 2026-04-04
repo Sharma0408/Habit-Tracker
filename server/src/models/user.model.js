@@ -9,13 +9,17 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,  // prevents duplicate emails
+      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
     xp: {
+      type: Number,
+      default: 0,
+    },
+    totalXP: {
       type: Number,
       default: 0,
     },

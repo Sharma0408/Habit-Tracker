@@ -6,10 +6,13 @@ const Habit = require("../models/Habit");
 exports.createHabit = async (req, res) => {
   try {
     const { title, difficulty } = req.body;
+    const xpMap = { easy: 10, medium: 20, hard: 30 };
+    const xpReward = xpMap[difficulty] || 10;
 
     const habit = new Habit({
       title,
       difficulty,
+      xpReward,
       userId: req.user.id,
     });
 
@@ -67,7 +70,26 @@ exports.completeHabit = async (req, res) => {
 
     // Add today's completion
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     habit.completedDates.push(today);
+
+    // Update streak
+    if (habit.lastCompleted) {
+      const last = new Date(habit.lastCompleted);
+      last.setHours(0, 0, 0, 0);
+
+      const diffDays = (today - last) / (1000 * 60 * 60 * 24);
+
+      if (diffDays === 1) {
+        habit.streak += 1; // completed yesterday → streak continues
+      } else if (diffDays > 1) {
+        habit.streak = 1;  // missed a day → reset streak
+      }
+    } else {
+      habit.streak = 1;    // first time completing
+    }
+
+    habit.lastCompleted = today;
 
     await habit.save();
 
@@ -84,6 +106,7 @@ exports.completeHabit = async (req, res) => {
     res.json({
       success: true,
       message: "Habit completed!",
+      streak: habit.streak,
       totalXP: user.totalXP,
       level: user.level
     });
